@@ -17,6 +17,6 @@ public class LogTestController {
         log.warn("这是log4j2的日志测试，warn级别");
         log.error("这是log4j2的日志测试，error级别");
 
-        return "HELLO_BUG";
+        return "HELLO_BUG123";
     }
 }
