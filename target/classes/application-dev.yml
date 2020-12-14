@@ -7,8 +7,20 @@ spring:
     username: root
     password: 123456
     url: jdbc:mysql://127.0.0.1:3306/forum?characterEncoding=utf-8&useSSL=false&serverTimezone=CST
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 15
+      minimum-idle: 5
+      idle-timeout: 30000
   thymeleaf:
     cache: false
+  mail:
+    host: smtp.sina.com
+    port: 465
+    username: kwh361@sina.com
+    password: 3abdc653257298f3
+    protocol: smtps
+    properties.mail.smtp.ssl.enable: true
 
 logging:
   config: classpath:log4j2-dev.xml
