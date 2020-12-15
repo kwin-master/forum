@@ -186,4 +186,13 @@ public class UserService extends BaseService {
     public void logout(String ticket) {
         loginTicketMapper.updateStatus(ticket,TICKET_INACTIVE);
     }
+
+    /**
+     * 查询ticket，获取登录凭证
+     * @param ticket
+     * @return
+     */
+    public LoginTicket findLoginTicket(String ticket) {
+        return loginTicketMapper.selectByTicket(ticket);
+    }
 }
