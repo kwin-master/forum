@@ -30,15 +30,12 @@ public class LoginTicketInterceptor extends BaseController implements HandlerInt
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //从cookies中获取凭证
         String ticket = CookieUtil.getValue(request, "ticket");
-        logger.info("尝试从cookie中获取登录凭证,ticket=" + ticket);
 
         if (ticket != null) {
-            logger.info("检查ticket是否有效");
             //查询凭证
             LoginTicket loginTicket = userService.findLoginTicket(ticket);
             //检查凭证是否有效
             if (loginTicket != null && loginTicket.getStatus() == TICKET_ACTIVE && loginTicket.getExpired().after(new Date())) {
-                logger.info("根据ticket查询登录的用户，把user存入hostHolder");
                 //根据凭证查询用户
                 User user = userService.findUserById(loginTicket.getUserId());
                 //在本次请求中持有用户
@@ -51,7 +48,6 @@ public class LoginTicketInterceptor extends BaseController implements HandlerInt
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         User user = hostHolder.getUser();
-        logger.info("从hostHolder中取出登录用户");
         if (user != null && modelAndView != null) {
             logger.info("把user存入modelAndView");
             modelAndView.addObject("loginUser",user);
@@ -60,7 +56,6 @@ public class LoginTicketInterceptor extends BaseController implements HandlerInt
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        logger.info("清空hostHolder");
         hostHolder.clear();
     }
 }

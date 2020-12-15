@@ -4,6 +4,7 @@ import com.kwin.forum.ForumApplicationTests;
 import com.kwin.forum.entity.User;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import static org.junit.Assert.*;
 
@@ -11,6 +12,13 @@ public class UserMapperTest extends ForumApplicationTests {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Value("${forum.}")
+    private String uploadPath;
+
+    private String domain;
+
+    private String contextPath;
 
     @Test
     public void selectById() {
@@ -48,5 +56,11 @@ public class UserMapperTest extends ForumApplicationTests {
     @Test
     public void updateStatus() {
         userMapper.updateStatus(149,1);
+    }
+
+    @Test
+    public void updateHeader() {
+        int rows = userMapper.updateHeader(153, "http://images.nowcoder.com/head/366t.png");
+        System.out.println(rows);
     }
 }

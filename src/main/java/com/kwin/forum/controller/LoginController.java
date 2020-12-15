@@ -56,14 +56,14 @@ public class LoginController extends BaseController {
 
     @GetMapping(path = "/kaptcha")
     public void getKaptcha(HttpServletResponse response, HttpSession session) {
-        logger.info("生成验证码");
+        //生成验证码
         String text = kaptchaProducer.createText();
         BufferedImage image = kaptchaProducer.createImage(text);
 
-        logger.info("将验证码存入session");
+        //将验证码存入session
         session.setAttribute("kaptcha",text);
 
-        logger.info("将图片输出给浏览器");
+        //将图片输出给浏览器
         response.setContentType("image/png");
         try {
             ImageIO.write(image,"png",response.getOutputStream());
