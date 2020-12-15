@@ -1,6 +1,7 @@
 package com.kwin.forum.config;
 
 import com.kwin.forum.controller.interceptor.AlphaInterceptor;
+import com.kwin.forum.controller.interceptor.LoginRequiredInterceptor;
 import com.kwin.forum.controller.interceptor.LoginTicketInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     private LoginTicketInterceptor loginTicketInterceptor;
 
+    @Autowired
+    private LoginRequiredInterceptor loginRequiredInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         /**
@@ -28,6 +32,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
          * 配置拦截器，不配置addPathPatterns时默认拦截所有path
          */
         registry.addInterceptor(loginTicketInterceptor)
+                .excludePathPatterns("/**/*.css","/**/*.png ","/**/*.jpg","/**/*.jpeg");
+
+        registry.addInterceptor(loginRequiredInterceptor)
                 .excludePathPatterns("/**/*.css","/**/*.png ","/**/*.jpg","/**/*.jpeg");
     }
 }

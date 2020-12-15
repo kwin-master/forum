@@ -1,5 +1,6 @@
 package com.kwin.forum.controller;
 
+import com.kwin.forum.annotation.LoginRequired;
 import com.kwin.forum.entity.User;
 import com.kwin.forum.service.UserService;
 import com.kwin.forum.util.HostHolder;
@@ -39,6 +40,7 @@ public class UserController extends BaseController {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
+    @LoginRequired
     @GetMapping(path = "/setting")
     public String  getSettingPage() {
         logger.info("转跳到账号设置页面");
@@ -51,6 +53,7 @@ public class UserController extends BaseController {
      * @param model
      * @return
      */
+    @LoginRequired
     @PostMapping(path = "/upload")
     public String uploadHeader(MultipartFile headerImage, Model model) {
         logger.info("准备上传头像");
