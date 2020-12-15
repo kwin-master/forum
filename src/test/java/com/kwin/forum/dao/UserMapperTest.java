@@ -17,4 +17,36 @@ public class UserMapperTest extends ForumApplicationTests {
         User user = userMapper.selectById(149);
         System.out.println(user);
     }
+
+    @Test
+    public void selectByName() {
+        User user = userMapper.selectByName("niuke");
+        System.out.println(user);
+    }
+
+    @Test
+    public void selectByEmail() {
+        User user = userMapper.selectByEmail("nowcoder149@sina.com");
+        System.out.println(user);
+    }
+
+    @Test
+    public void insertUser() {
+        User user = new User();
+        user.setUsername("test150");
+        user.setPassword("123456");
+        System.out.println(user.getId());
+        userMapper.insertUser(user);
+        System.out.println(user.getId());
+    }
+
+    @Test
+    public void deleteUser() {
+        userMapper.deleteUser(150);
+    }
+
+    @Test
+    public void updateStatus() {
+        userMapper.updateStatus(149,1);
+    }
 }

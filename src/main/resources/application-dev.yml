@@ -25,4 +25,4 @@ spring:
 logging:
   config: classpath:log4j2-dev.xml
 
-
+forum.path.domain: http://localhost:8080

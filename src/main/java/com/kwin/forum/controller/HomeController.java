@@ -26,7 +26,7 @@ public class HomeController extends BaseController {
 
     @GetMapping(path = "/index")
     public String getIndexPage(Model model, Page page) {
-        logger.info("执行");
+        logger.info("查询出首页的帖子");
         //springMVC会自动实例化Model和Page，并将Page注入Model
         //所以，在thymeleaf中可以直接访问Page对象中的数据
         page.setRows(discussPostService.findDiscussPostRows(0));

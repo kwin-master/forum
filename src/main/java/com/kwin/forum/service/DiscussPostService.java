@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class DiscussPostService {
+public class DiscussPostService extends BaseService {
     @Autowired
     private DiscussPostMapper discussPostMapper;
 
@@ -20,6 +20,11 @@ public class DiscussPostService {
      * @return
      */
     public List<DiscussPost> findDiscussPosts(int userId,int offset,int limit) {
+        if (userId == 0) {
+            logger.info("查询出所有帖子,从第" + offset + "条开始，每页" + limit + "条记录");
+        }else {
+            logger.info("查询出userId=" + userId + "的所有帖子,从第" + offset + "条开始，每页" + limit + "条记录");
+        }
         return discussPostMapper.selectDiscussPosts(userId,offset,limit);
     }
 
@@ -31,6 +36,13 @@ public class DiscussPostService {
      * @return
      */
     public int findDiscussPostRows(int userId) {
-        return discussPostMapper.selectDiscussPostRows(userId);
+        logger.info("查询帖子数量");
+        int rows = discussPostMapper.selectDiscussPostRows(userId);
+        if (userId == 0) {
+            logger.info("一共有" + rows + "条帖子");
+        } else {
+            logger.info("userId=" + userId + "共有" + rows + "条帖子");
+        }
+        return rows;
     }
 }
