@@ -44,8 +44,6 @@ public class HomeController extends BaseController {
                 discussPosts.add(map);
             }
         }
-        logger.info("查询首页的帖子和用户信息");
-
         model.addAttribute("discussPosts",discussPosts);
         return "/index";
     }

@@ -9,7 +9,7 @@ public class UserContent {
     public static final int WEB_MASTER = 2;
 
     //未激活
-    public static final int INACTIVE = 0;
+    public static final int USER_INACTIVE = 0;
     //已激活
-    public static final int ACTIVE = 1;
+    public static final int USER_ACTIVE = 1;
 }

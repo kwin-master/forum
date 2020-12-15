@@ -1,8 +1,8 @@
 package com.kwin.forum.service;
 
-import com.kwin.forum.contants.ForumContent;
-import com.kwin.forum.contants.UserContent;
+import com.kwin.forum.dao.LoginTicketMapper;
 import com.kwin.forum.dao.UserMapper;
+import com.kwin.forum.entity.LoginTicket;
 import com.kwin.forum.entity.User;
 import com.kwin.forum.util.MailClient;
 import com.kwin.forum.util.UUIDUtils;
@@ -18,6 +18,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import static com.kwin.forum.contants.ForumContent.*;
+import static com.kwin.forum.contants.LoginTicketContent.*;
+import static com.kwin.forum.contants.UserContent.*;
+
 @Service
 public class UserService extends BaseService {
     @Autowired
@@ -28,6 +32,9 @@ public class UserService extends BaseService {
 
     @Autowired
     private TemplateEngine templateEngine;
+
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
 
     @Value("${forum.path.domain}")
     private String domain;
@@ -82,8 +89,8 @@ public class UserService extends BaseService {
         logger.info("验证通过，开始往数据库中添加用户");
         user.setSalt(UUIDUtils.generateUUID().substring(0,5));
         user.setPassword(UUIDUtils.md5(user.getPassword() + user.getSalt()));
-        user.setType(UserContent.NORMAL_USER);
-        user.setStatus(UserContent.INACTIVE);
+        user.setType(NORMAL_USER);
+        user.setStatus(USER_INACTIVE);
         user.setActivationCode(UUIDUtils.generateUUID());
         user.setHeaderUrl(String.format("http://images.nowcoder.com/head/%dt.png",new Random().nextInt(1000)));
         user.setCreateTime(new Date());
@@ -104,15 +111,79 @@ public class UserService extends BaseService {
         return map;
     }
 
+    /**
+     * 激活账号的业务
+     * @param userId
+     * @param code
+     * @return
+     */
     public int activation(int userId,String code) {
         User user = userMapper.selectById(userId);
         if (user.getStatus() == 1) {
-            return ForumContent.ACTIVATION_REPEAT;
+            return ACTIVATION_REPEAT;
         } else if (user.getActivationCode().equals(code)) {
             userMapper.updateStatus(userId,1);
-            return ForumContent.ACTIVATION_SUCCESS;
+            return ACTIVATION_SUCCESS;
         } else {
-            return ForumContent.ACTIVATION_FAILURE;
+            return ACTIVATION_FAILURE;
         }
+    }
+
+    /**
+     * 登录的业务
+     * @return
+     */
+    public Map<String,Object> login(String username,String password,int expiredSeconds) {
+        Map<String, Object> map = new HashMap<>();
+
+        //空值处理
+        logger.info("空值检查");
+        if (StringUtils.isBlank(username)) {
+            map.put("usernameMsg","账号不能为空!");
+            return map;
+        }
+        if (StringUtils.isBlank(password)) {
+            map.put("passwordMsg","密码不能为空!");
+            return map;
+        }
+
+        logger.info("验证账号");
+        //验证账号
+        User user = userMapper.selectByName(username);
+        if (user == null) {
+            map.put("usernameMsg","该账号不存在!");
+            return map;
+        }
+        //验证状态
+        if (user.getStatus() == 0) {
+            map.put("usernameMsg","该账号未激活!");
+            return map;
+        }
+        //验证密码
+        password = UUIDUtils.md5(password + user.getSalt());
+        if (!user.getPassword().equals(password)) {
+            map.put("password","密码不正确!");
+            return map;
+        }
+
+        logger.info("生成登录凭证,有效时间为" + expiredSeconds/60/60 + "h");
+        //生成登录凭证
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(UUIDUtils.generateUUID());
+        loginTicket.setStatus(TICKET_ACTIVE);
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));
+        loginTicketMapper.insertLoginTicket(loginTicket);
+
+        map.put("ticket",loginTicket.getTicket());
+        return map;
+    }
+
+    /**
+     * 退出登录
+     * @param ticket
+     */
+    public void logout(String ticket) {
+        loginTicketMapper.updateStatus(ticket,TICKET_INACTIVE);
     }
 }
