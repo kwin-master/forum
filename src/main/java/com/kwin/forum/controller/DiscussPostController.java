@@ -63,5 +63,6 @@ public class DiscussPostController extends BaseController {
         model.addAttribute("user",user);
 
         return "/site/discuss-detail";
+
     }
 }
