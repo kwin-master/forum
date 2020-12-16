@@ -27,4 +27,18 @@ public class DiscussPostMapperTest extends ForumApplicationTests {
         int rows = discussPostMapper.selectDiscussPostRows(0);
         System.out.println(rows);
     }
+
+    @Test
+    public void insertDiscussPost() {
+        DiscussPost discussPost = new DiscussPost();
+        discussPost.setUserId(999);
+        discussPost.setTitle("测试");
+        discussPostMapper.insertDiscussPost(discussPost);
+    }
+
+    @Test
+    public void selectDiscussPostById() {
+        DiscussPost discussPost = discussPostMapper.selectDiscussPostById(280);
+        System.out.println(discussPost);
+    }
 }

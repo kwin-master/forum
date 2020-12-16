@@ -2,8 +2,13 @@ package com.kwin.forum.service;
 
 import com.kwin.forum.dao.DiscussPostMapper;
 import com.kwin.forum.entity.DiscussPost;
+import com.kwin.forum.util.SensitiveFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.List;
 
@@ -11,6 +16,9 @@ import java.util.List;
 public class DiscussPostService extends BaseService {
     @Autowired
     private DiscussPostMapper discussPostMapper;
+
+    @Autowired
+    private SensitiveFilter sensitiveFilter;
 
     /**
      * userId等于0时查询所有帖子
@@ -44,5 +52,35 @@ public class DiscussPostService extends BaseService {
             logger.info("userId=" + userId + "共有" + rows + "条帖子");
         }
         return rows;
+    }
+
+    /**
+     * 添加帖子
+     * @param post
+     */
+    public int addDiscussPost(DiscussPost post) {
+        logger.info("添加帖子");
+        if (post == null) {
+            logger.error("参数不能为空");
+            throw new IllegalArgumentException("参数不能为空!");
+        }
+
+        //转义HTML标记
+        post.setTitle(HtmlUtils.htmlEscape(post.getTitle()));
+        post.setContent(HtmlUtils.htmlEscape(post.getContent()));
+        //过滤敏感词
+        post.setTitle(sensitiveFilter.filter(post.getTitle()));
+        post.setContent(sensitiveFilter.filter(post.getContent()));
+
+        return discussPostMapper.insertDiscussPost(post);
+    }
+
+    /**
+     * 通过id查询帖子
+     * @param id
+     * @return
+     */
+    public DiscussPost findDiscussPostById(int id) {
+        return discussPostMapper.selectDiscussPostById(id);
     }
 }
