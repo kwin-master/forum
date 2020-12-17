@@ -33,7 +33,7 @@ public class HomeController extends BaseController {
         page.setPath("/index");
         logger.info("初始化首页");
 
-        List<DiscussPost> list = discussPostService.findDiscussPosts(0, page.getOffSet(), page.getLimit());
+        List<DiscussPost> list = discussPostService.findDiscussPosts(0, page.getOffset(), page.getLimit());
         List<Map<String,Object>> discussPosts = new ArrayList<>();
         if (list != null) {
             for (DiscussPost discussPost : list) {

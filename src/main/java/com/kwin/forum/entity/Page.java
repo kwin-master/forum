@@ -47,7 +47,7 @@ public class Page {
      * 通过当前页的页码获取当前页的起始行
      * @return
      */
-    public int getOffSet() {
+    public int getOffset() {
         return (current - 1) * limit;
     }
 
