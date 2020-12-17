@@ -103,7 +103,7 @@ public class DiscussPostController extends BaseController {
                         //作者
                         replyVo.put("user",userService.findUserById(reply.getUserId()));
                         //回复目标
-                        User target = reply.getTargetId() == 0 ? null : userService.findUserById(reply.getTargetId());
+                        User target = reply.getTargetId() == null ? null : userService.findUserById(reply.getTargetId());
                         replyVo.put("target",target);
 
                         replyVoList.add(replyVo);

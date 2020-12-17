@@ -41,4 +41,10 @@ public class DiscussPostMapperTest extends ForumApplicationTests {
         DiscussPost discussPost = discussPostMapper.selectDiscussPostById(280);
         System.out.println(discussPost);
     }
+
+    @Test
+    public void updateCommentCount() {
+        int rows = discussPostMapper.updateCommentCount(283, 1);
+        System.out.println(rows);
+    }
 }

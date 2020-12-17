@@ -26,4 +26,12 @@ public class CommentMapperTest extends ForumApplicationTests {
         int rows = commentMapper.selectCountByEntity(ENTITY_TYPE_POST, 277);
         System.out.println(rows);
     }
+
+    @Test
+    public void insertComment() {
+        Comment comment = new Comment();
+        comment.setContent("dhskfhskjf");
+        int rows = commentMapper.insertComment(comment);
+        System.out.println(rows);
+    }
 }
