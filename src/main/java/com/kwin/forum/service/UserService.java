@@ -162,7 +162,7 @@ public class UserService extends BaseService {
         //验证密码
         password = UUIDUtils.md5(password + user.getSalt());
         if (!user.getPassword().equals(password)) {
-            map.put("password","密码不正确!");
+            map.put("passwordMsg","密码不正确!");
             return map;
         }
 
