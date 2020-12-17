@@ -5,6 +5,7 @@ import com.kwin.forum.entity.Message;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -45,5 +46,22 @@ public class MessageMapperTest extends ForumApplicationTests {
     public void selectLetterUnreadCount() {
         int count = messageMapper.selectLetterUnreadCount(131, "111_131");
         System.out.println(count);
+    }
+
+    @Test
+    public void insertMessage() {
+        Message message = new Message();
+        message.setConversationId("comment");
+        message.setStatus(0);
+        int rows = messageMapper.insertMessage(message);
+        System.out.println(rows);
+    }
+
+    @Test
+    public void updateStatus() {
+        ArrayList<Integer> ids = new ArrayList<>();
+        ids.add(354);
+        int rows = messageMapper.updateStatus(ids, 1);
+        System.out.println(rows);
     }
 }
