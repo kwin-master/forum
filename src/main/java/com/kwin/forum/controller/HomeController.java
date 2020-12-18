@@ -47,4 +47,9 @@ public class HomeController extends BaseController {
         model.addAttribute("discussPosts",discussPosts);
         return "/index";
     }
+
+    @GetMapping(path = "/error")
+    public String getErrorPage() {
+        return "/error/500";
+    }
 }

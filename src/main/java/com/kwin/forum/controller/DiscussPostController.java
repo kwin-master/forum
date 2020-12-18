@@ -39,6 +39,7 @@ public class DiscussPostController extends BaseController {
     @PostMapping(path = "/add")
     @ResponseBody
     public String addDiscussPost(String title,String content) {
+        System.out.println(1/0);
         logger.info("发布新帖子");
         User user = hostHolder.getUser();
         if (user == null) {
