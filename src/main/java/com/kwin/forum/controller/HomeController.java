@@ -4,6 +4,7 @@ import com.kwin.forum.entity.DiscussPost;
 import com.kwin.forum.entity.Page;
 import com.kwin.forum.entity.User;
 import com.kwin.forum.service.DiscussPostService;
+import com.kwin.forum.service.LikeService;
 import com.kwin.forum.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.kwin.forum.contants.CommentContent.ENTITY_TYPE_POST;
+
 @Controller
 public class HomeController extends BaseController {
 
@@ -23,6 +26,9 @@ public class HomeController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private LikeService likeService;
 
     @GetMapping(path = "/index")
     public String getIndexPage(Model model, Page page) {
@@ -41,6 +47,11 @@ public class HomeController extends BaseController {
                 map.put("post",discussPost);
                 User user = userService.findUserById(discussPost.getUserId());
                 map.put("user",user);
+
+                //查询点赞的数量
+                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST,discussPost.getId());
+                map.put("likeCount",likeCount);
+
                 discussPosts.add(map);
             }
         }

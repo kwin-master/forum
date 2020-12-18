@@ -6,6 +6,7 @@ import com.kwin.forum.entity.Page;
 import com.kwin.forum.entity.User;
 import com.kwin.forum.service.CommentService;
 import com.kwin.forum.service.DiscussPostService;
+import com.kwin.forum.service.LikeService;
 import com.kwin.forum.service.UserService;
 import com.kwin.forum.util.HostHolder;
 import com.kwin.forum.util.JsonUtils;
@@ -17,8 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-import static com.kwin.forum.contants.CommentContent.ENTITY_TYPE_COMMENT;
-import static com.kwin.forum.contants.CommentContent.ENTITY_TYPE_POST;
+import static com.kwin.forum.contants.CommentContent.*;
 import static com.kwin.forum.contants.DiscussPostContent.*;
 
 @Controller
@@ -36,10 +36,12 @@ public class DiscussPostController extends BaseController {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private LikeService likeService;
+
     @PostMapping(path = "/add")
     @ResponseBody
     public String addDiscussPost(String title,String content) {
-        System.out.println(1/0);
         logger.info("发布新帖子");
         User user = hostHolder.getUser();
         if (user == null) {
@@ -70,6 +72,13 @@ public class DiscussPostController extends BaseController {
         //作者
         User user = userService.findUserById(post.getUserId());
         model.addAttribute("user",user);
+        //点赞数量
+        long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST,discussPostId);
+        model.addAttribute("likeCount",likeCount);
+        //点赞状态
+        int likeStatus = hostHolder.getUser() == null ? 0 :
+                likeService.findEntityLikeStatus(hostHolder.getUser().getId(),ENTITY_TYPE_POST,discussPostId);
+        model.addAttribute("likeStatus",likeStatus);
 
         //评论分页信息
         page.setLimit(5);
@@ -92,6 +101,13 @@ public class DiscussPostController extends BaseController {
                 commentVO.put("comment",comment);
                 //作者
                 commentVO.put("user",userService.findUserById(comment.getUserId()));
+                //点赞数量
+                likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT,comment.getId());
+                commentVO.put("likeCount",likeCount);
+                //点赞状态
+                likeStatus = hostHolder.getUser() == null ? 0 :
+                        likeService.findEntityLikeStatus(hostHolder.getUser().getId(),ENTITY_TYPE_COMMENT,comment.getId());
+                commentVO.put("likeStatus",likeStatus);
                 //回复列表
                 List<Comment> replyList = commentService.findCommentsByEntity(ENTITY_TYPE_COMMENT,comment.getId(),0,Integer.MAX_VALUE);
                 //回复VO列表
@@ -106,6 +122,13 @@ public class DiscussPostController extends BaseController {
                         //回复目标
                         User target = reply.getTargetId() == null ? null : userService.findUserById(reply.getTargetId());
                         replyVo.put("target",target);
+                        //点赞数量
+                        likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT,reply.getId());
+                        replyVo.put("likeCount",likeCount);
+                        //点赞状态
+                        likeStatus = hostHolder.getUser() == null ? 0 :
+                                likeService.findEntityLikeStatus(hostHolder.getUser().getId(),ENTITY_TYPE_COMMENT,reply.getId());
+                        replyVo.put("likeStatus",likeStatus);
 
                         replyVoList.add(replyVo);
                     }
