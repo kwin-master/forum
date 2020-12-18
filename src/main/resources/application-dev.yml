@@ -21,6 +21,10 @@ spring:
     password: 3abdc653257298f3
     protocol: smtps
     properties.mail.smtp.ssl.enable: true
+  redis:
+    database: 11
+    host: 106.52.8.227
+    port: 6379
 
 logging:
   config: classpath:log4j2-dev.xml
