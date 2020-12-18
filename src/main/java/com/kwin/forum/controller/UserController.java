@@ -2,6 +2,7 @@ package com.kwin.forum.controller;
 
 import com.kwin.forum.annotation.LoginRequired;
 import com.kwin.forum.entity.User;
+import com.kwin.forum.service.FollowService;
 import com.kwin.forum.service.LikeService;
 import com.kwin.forum.service.UserService;
 import com.kwin.forum.util.HostHolder;
@@ -23,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import static com.kwin.forum.contants.CommentContent.ENTITY_TYPE_USER;
+
 @Controller
 @RequestMapping("/user")
 public class UserController extends BaseController {
@@ -34,6 +37,9 @@ public class UserController extends BaseController {
 
     @Autowired
     private LikeService likeService;
+
+    @Autowired
+    private FollowService followService;
 
     @Value("${forum.path.upload}")
     private String uploadPath;
@@ -143,6 +149,19 @@ public class UserController extends BaseController {
         //点赞数量
         int likeCount = likeService.findUserLikeCount(userId);
         model.addAttribute("likeCount",likeCount);
+
+        //关注数量
+        long followeeCount = followService.findFolloweeCount(userId,ENTITY_TYPE_USER);
+        model.addAttribute("followeeCount",followeeCount);
+        //粉丝数量
+        long followerCount = followService.findFollowerCount(ENTITY_TYPE_USER,userId);
+        model.addAttribute("followerCount",followerCount);
+        //是否已关注
+        boolean hasFollowed = false;
+        if (hostHolder.getUser() != null) {
+            hasFollowed = followService.hasFollowed(hostHolder.getUser().getId(),ENTITY_TYPE_USER,userId);
+        }
+        model.addAttribute("hasFollowed",hasFollowed);
 
         return "/site/profile";
     }
