@@ -2,6 +2,7 @@ package com.kwin.forum.controller;
 
 import com.kwin.forum.annotation.LoginRequired;
 import com.kwin.forum.entity.User;
+import com.kwin.forum.service.LikeService;
 import com.kwin.forum.service.UserService;
 import com.kwin.forum.util.HostHolder;
 import com.kwin.forum.util.UUIDUtils;
@@ -30,6 +31,9 @@ public class UserController extends BaseController {
 
     @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    private LikeService likeService;
 
     @Value("${forum.path.upload}")
     private String uploadPath;
@@ -119,5 +123,27 @@ public class UserController extends BaseController {
         } catch (Exception e) {
             logger.error("读取文件失败:" + e.getMessage());
         }
+    }
+
+    /**
+     * 获取个人主页
+     * @param userId
+     * @param model
+     * @return
+     */
+    @GetMapping(path = "/profile/{userId}")
+    public String getProfilePage(@PathVariable("userId") int userId,Model model) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在!");
+        }
+
+        //用户
+        model.addAttribute("user",user);
+        //点赞数量
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount",likeCount);
+
+        return "/site/profile";
     }
 }

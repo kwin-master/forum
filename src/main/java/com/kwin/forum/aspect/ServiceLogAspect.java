@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@Component
-@Aspect
+//@Component
+//@Aspect
 public class ServiceLogAspect extends BaseController {
 
     @Pointcut("execution(* com.kwin.forum.service.*.*(..))")
