@@ -25,6 +25,12 @@ spring:
     database: 1
     host: 120.77.99.84
     port: 6379
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: forum-consumer-group
+      enable-auto-commit: true
+      auto-commit-interval: 3000
 
 logging:
   config: classpath:log4j2-dev.xml
