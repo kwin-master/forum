@@ -22,8 +22,8 @@ spring:
     protocol: smtps
     properties.mail.smtp.ssl.enable: true
   redis:
-    database: 11
-    host: 106.52.8.227
+    database: 1
+    host: 120.77.99.84
     port: 6379
 
 logging:
