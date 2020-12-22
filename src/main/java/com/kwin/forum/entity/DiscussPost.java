@@ -1,19 +1,42 @@
 package com.kwin.forum.entity;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+
 import java.util.Date;
 
 /**
  * 帖子实体类
  */
+@Document(indexName = "discusspost",type = "_doc",shards = 6,replicas = 3)
 public class DiscussPost {
+    @Id
     private Integer id;//帖子id(主键）
+
+    @Field(type = FieldType.Integer)
     private Integer userId;//用户id(普通索引)
+
+    @Field(type = FieldType.Text,analyzer = "ik_max_word",searchAnalyzer = "ik_smart")
     private String title;//帖子标题
+
+    @Field(type = FieldType.Text,analyzer = "ik_max_word",searchAnalyzer = "ik_smart")
     private String content;//帖子内容
+
+    @Field(type = FieldType.Integer)
     private Integer type;//帖子类型：0-普通，1-置顶
+
+    @Field(type = FieldType.Integer)
     private Integer status;//贴子状态：0-正常,1-精华,2-拉黑
+
+    @Field(type = FieldType.Date)
     private Date createTime;//创建时间
+
+    @Field(type = FieldType.Integer)
     private Integer commentCount;//评论数量
+
+    @Field(type = FieldType.Double)
     private Double score;//帖子评分
 
     public Integer getId() {

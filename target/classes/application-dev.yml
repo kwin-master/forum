@@ -31,6 +31,10 @@ spring:
       group-id: forum-consumer-group
       enable-auto-commit: true
       auto-commit-interval: 3000
+  data:
+    elasticsearch:
+      cluster-name: kwin-forum
+      cluster-nodes: 127.0.0.1:9300
 
 logging:
   config: classpath:log4j2-dev.xml
