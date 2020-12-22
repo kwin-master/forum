@@ -12,4 +12,7 @@ public class UserContent {
     public static final int USER_INACTIVE = 0;
     //已激活
     public static final int USER_ACTIVE = 1;
+
+    //体统用户ID
+    public static final int SYSTEM_USER_ID = 1;
 }

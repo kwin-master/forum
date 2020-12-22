@@ -1,6 +1,8 @@
 package com.kwin.forum.controller;
 
+import com.kwin.forum.entity.Event;
 import com.kwin.forum.entity.User;
+import com.kwin.forum.event.EventProducer;
 import com.kwin.forum.service.LikeService;
 import com.kwin.forum.util.HostHolder;
 import com.kwin.forum.util.JsonUtils;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.kwin.forum.contants.TopicContent.TOPIC_LIKE;
+
 @Controller
 public class LikeController extends BaseController {
     @Autowired
@@ -20,11 +24,14 @@ public class LikeController extends BaseController {
     @Autowired
     private HostHolder hostHolder;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     @PostMapping(path = "/like")
     @ResponseBody
-    public String like(int entityType,int entityId,int entityUserId) {
+    public String like(int entityType,int entityId,int entityUserId,int postId) {
         User user = hostHolder.getUser();
-        logger.info(user.getUsername() + "点赞");
+
         //点赞
         likeService.like(user.getId(),entityType,entityId,entityUserId);
         //点赞数
@@ -35,6 +42,18 @@ public class LikeController extends BaseController {
         Map<String,Object> map = new HashMap<>();
         map.put("likeCount",likeCount);
         map.put("likeStatus",likeStatus);
+
+        // 触发点赞事件
+        if (likeStatus == 1) {
+            Event event = new Event()
+                    .setTopic(TOPIC_LIKE)
+                    .setUserId(hostHolder.getUser().getId())
+                    .setEntityType(entityType)
+                    .setEntityId(entityId)
+                    .setEntityUserId(entityUserId)
+                    .setData("postId", postId);
+            eventProducer.fireEvent(event);
+        }
 
         return JsonUtils.getJSONString(0,null,map);
     }

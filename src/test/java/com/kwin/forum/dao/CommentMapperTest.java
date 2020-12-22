@@ -34,4 +34,10 @@ public class CommentMapperTest extends ForumApplicationTests {
         int rows = commentMapper.insertComment(comment);
         System.out.println(rows);
     }
+
+    @Test
+    public void selectCommentById() {
+        Comment comment = commentMapper.selectCommentById(238);
+        System.out.println(comment);
+    }
 }

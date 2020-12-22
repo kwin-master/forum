@@ -64,4 +64,30 @@ public class MessageMapperTest extends ForumApplicationTests {
         int rows = messageMapper.updateStatus(ids, 1);
         System.out.println(rows);
     }
+
+    @Test
+    public void selectLatestNotice() {
+        Message message = messageMapper.selectLatestNotice(111, "like");
+        System.out.println(message);
+    }
+
+    @Test
+    public void selectNoticeCount() {
+        int count = messageMapper.selectNoticeCount(111, "like");
+        System.out.println(count);
+    }
+
+    @Test
+    public void selectNoticeUnreadCount() {
+        int count = messageMapper.selectNoticeUnreadCount(111, "like");
+        System.out.println(count);
+    }
+
+    @Test
+    public void selectNotices() {
+        List<Message> messages = messageMapper.selectNotices(111, "like", 0, 2);
+        for (Message message : messages) {
+            System.out.println(message);
+        }
+    }
 }

@@ -52,4 +52,8 @@ public class CommentService extends BaseService {
 
         return rows;
     }
+
+    public Comment findCommentById(int id) {
+        return commentMapper.selectCommentById(id);
+    }
 }

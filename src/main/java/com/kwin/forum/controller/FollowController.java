@@ -1,7 +1,9 @@
 package com.kwin.forum.controller;
 
+import com.kwin.forum.entity.Event;
 import com.kwin.forum.entity.Page;
 import com.kwin.forum.entity.User;
+import com.kwin.forum.event.EventProducer;
 import com.kwin.forum.service.FollowService;
 import com.kwin.forum.service.UserService;
 import com.kwin.forum.util.HostHolder;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.kwin.forum.contants.CommentContent.ENTITY_TYPE_USER;
+import static com.kwin.forum.contants.TopicContent.TOPIC_FOLLOW;
 
 @Controller
 public class FollowController extends BaseController {
@@ -30,11 +33,24 @@ public class FollowController extends BaseController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     @PostMapping(path = "/follow")
     @ResponseBody
     public String follow(int entityType,int entityId) {
         User user = hostHolder.getUser();
         followService.follow(user.getId(),entityType,entityId);
+
+        //触发关注事件
+        Event event = new Event()
+                .setTopic(TOPIC_FOLLOW)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(entityType)
+                .setEntityId(entityId)
+                .setEntityUserId(entityId);
+        eventProducer.fireEvent(event);
+
         return JsonUtils.getJSONString(0,"已关注!");
     }
 
