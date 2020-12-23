@@ -1,8 +1,11 @@
 package com.kwin.forum.event;
 
 import com.alibaba.fastjson.JSONObject;
+import com.kwin.forum.entity.DiscussPost;
 import com.kwin.forum.entity.Event;
 import com.kwin.forum.entity.Message;
+import com.kwin.forum.service.DiscussPostService;
+import com.kwin.forum.service.ElasticsearchService;
 import com.kwin.forum.service.MessageService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -27,6 +30,12 @@ public class EventConsumer {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private DiscussPostService discussPostService;
+
+    @Autowired
+    private ElasticsearchService elasticsearchService;
 
     /**
      * 同时监听评论、点赞、关注三个主题
@@ -66,5 +75,25 @@ public class EventConsumer {
 
         message.setContent(JSONObject.toJSONString(content));
         messageService.addMessage(message);
+    }
+
+    //消费发帖事件
+    @KafkaListener(topics = {TOPIC_PUBLISH})//监听Kafka的TOPIC_PUBLISH
+    public void handlePublishMessage(ConsumerRecord record) {
+        if (record == null || record.value() == null) {
+            logger.error("消息的内容为空");
+            return;
+        }
+
+        Event event = JSONObject.parseObject(record.value().toString(),Event.class);
+        if (event == null) {
+            logger.error("消息格式错误！");
+            return;
+        }
+
+        //根据监听到的实体从数据库中取相应的帖子
+        DiscussPost post = discussPostService.findDiscussPostById(event.getEntityId());
+        //把帖子存入es
+        elasticsearchService.saveDiscussPost(post);
     }
 }

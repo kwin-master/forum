@@ -33,7 +33,9 @@ public class DiscussPostMapperTest extends ForumApplicationTests {
         DiscussPost discussPost = new DiscussPost();
         discussPost.setUserId(999);
         discussPost.setTitle("测试");
-        discussPostMapper.insertDiscussPost(discussPost);
+        int row = discussPostMapper.insertDiscussPost(discussPost);
+        System.out.println(row);
+        System.out.println(discussPost);
     }
 
     @Test

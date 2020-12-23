@@ -1,9 +1,7 @@
 package com.kwin.forum.controller;
 
-import com.kwin.forum.entity.Comment;
-import com.kwin.forum.entity.DiscussPost;
-import com.kwin.forum.entity.Page;
-import com.kwin.forum.entity.User;
+import com.kwin.forum.entity.*;
+import com.kwin.forum.event.EventProducer;
 import com.kwin.forum.service.CommentService;
 import com.kwin.forum.service.DiscussPostService;
 import com.kwin.forum.service.LikeService;
@@ -20,6 +18,7 @@ import java.util.*;
 
 import static com.kwin.forum.contants.CommentContent.*;
 import static com.kwin.forum.contants.DiscussPostContent.*;
+import static com.kwin.forum.contants.TopicContent.TOPIC_PUBLISH;
 
 @Controller
 @RequestMapping(path = "/discuss")
@@ -38,6 +37,9 @@ public class DiscussPostController extends BaseController {
 
     @Autowired
     private LikeService likeService;
+
+    @Autowired
+    private EventProducer eventProducer;
 
     @PostMapping(path = "/add")
     @ResponseBody
@@ -58,6 +60,15 @@ public class DiscussPostController extends BaseController {
         post.setType(NORMAL_TYPE);
         post.setCreateTime(new Date());
         discussPostService.addDiscussPost(post);
+
+        //触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(post.getId());
+        eventProducer.fireEvent(event);
+
         logger.info("帖子发布成功");
         //报错的情况，将来统一处理
         return JsonUtils.getJSONString(0,"发布成功!");

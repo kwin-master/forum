@@ -19,6 +19,7 @@ import java.util.Date;
 import static com.kwin.forum.contants.CommentContent.ENTITY_TYPE_COMMENT;
 import static com.kwin.forum.contants.CommentContent.ENTITY_TYPE_POST;
 import static com.kwin.forum.contants.TopicContent.TOPIC_COMMENT;
+import static com.kwin.forum.contants.TopicContent.TOPIC_PUBLISH;
 
 @Controller
 @RequestMapping("/comment")
@@ -45,11 +46,11 @@ public class CommentController {
 
         // 触发评论事件
         Event event = new Event()
-                .setTopic(TOPIC_COMMENT)
-                .setUserId(hostHolder.getUser().getId())
-                .setEntityType(comment.getEntityType())
-                .setEntityId(comment.getEntityId())
-                .setData("postId", discussPostId);
+                .setTopic(TOPIC_COMMENT)//主题-评论
+                .setUserId(hostHolder.getUser().getId())//登录用户id
+                .setEntityType(comment.getEntityType())//实体-帖子/评论
+                .setEntityId(comment.getEntityId())//评论id/帖子id
+                .setData("postId", discussPostId);//帖子id
         if (comment.getEntityType() == ENTITY_TYPE_POST) {
             DiscussPost target = discussPostService.findDiscussPostById(comment.getEntityId());
             event.setEntityUserId(target.getUserId());
@@ -59,6 +60,16 @@ public class CommentController {
         }
         //评论事件发送到kafka的评论topic中
         eventProducer.fireEvent(event);
+
+        //触发发帖事件
+        if (comment.getEntityType() == ENTITY_TYPE_POST) {
+            event = new Event()
+                    .setTopic(TOPIC_PUBLISH)
+                    .setUserId(comment.getUserId())
+                    .setEntityType(ENTITY_TYPE_POST)
+                    .setEntityId(discussPostId);
+            eventProducer.fireEvent(event);
+        }
 
         return "redirect:/discuss/detail/" + discussPostId;
     }
