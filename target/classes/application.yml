@@ -11,3 +11,4 @@ mybatis:
   type-aliases-package: com.kwin.forum.entity
   configuration:
     map-underscore-to-camel-case: true
+    use-generated-keys: true

@@ -189,10 +189,6 @@ public class MessageController extends BaseController {
 
             String content = HtmlUtils.htmlUnescape(message.getContent());
             Map<String, Object> data = JSONObject.parseObject(content, HashMap.class);
-            System.out.println(data);
-            if (userService.findUserById((Integer) data.get("userId")) == null){
-                System.out.println((Integer) data.get("userId"));
-            }
 
             messageVO.put("user", userService.findUserById((Integer) data.get("userId")));
             messageVO.put("entityType", data.get("entityType"));
