@@ -260,7 +260,6 @@ public class UserService extends BaseService {
 
     public Collection<? extends GrantedAuthority> getAuthorities(int userId) {
         User user = this.findUserById(userId);
-
         List<GrantedAuthority> list = new ArrayList<>();
         list.add(new GrantedAuthority() {
             @Override

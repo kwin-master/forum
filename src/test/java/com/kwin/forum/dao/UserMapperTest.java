@@ -13,7 +13,7 @@ public class UserMapperTest extends ForumApplicationTests {
     @Autowired
     private UserMapper userMapper;
 
-    @Value("${forum.}")
+    @Value("${forum.path.upload}")
     private String uploadPath;
 
     private String domain;
@@ -22,7 +22,7 @@ public class UserMapperTest extends ForumApplicationTests {
 
     @Test
     public void selectById() {
-        User user = userMapper.selectById(149);
+        User user = userMapper.selectById(111);
         System.out.println(user);
     }
 

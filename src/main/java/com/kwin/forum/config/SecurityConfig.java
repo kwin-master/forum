@@ -46,6 +46,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         AUTHORITY_ADMIN,
                         AUTHORITY_MODERATOR
                 )
+                //置顶加精的权限：版主
+                .antMatchers(
+                        "/discuss/top",
+                        "/discuss/wonderful"
+                )
+                .hasAnyAuthority(
+                        AUTHORITY_MODERATOR
+                )
+                //删除的权限：管理员
+                .antMatchers(
+                        "/discuss/delete",
+                        "/data/**",
+                        "/actuator/**"
+                )
+                .hasAnyAuthority(
+                        AUTHORITY_ADMIN
+                )
                 .anyRequest().permitAll()//其他的请求都放行
                 .and().csrf().disable();//先关闭csfc配置
 

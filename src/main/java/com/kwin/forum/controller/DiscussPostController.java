@@ -157,4 +157,58 @@ public class DiscussPostController extends BaseController {
 
         return "/site/discuss-detail";
     }
+
+    //置顶
+    @PostMapping(path = "/top")
+    @ResponseBody
+    public String setTop(int id) {
+        discussPostService.updateType(id,1);
+
+        //触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityType(id);
+
+        eventProducer.fireEvent(event);
+
+        return JsonUtils.getJSONString(0);
+    }
+
+    //加精
+    @PostMapping(path = "/wonderful")
+    @ResponseBody
+    public String setWonderful(int id) {
+        discussPostService.updateStatus(id,1);
+
+        //触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(id);
+
+        eventProducer.fireEvent(event);
+
+        return JsonUtils.getJSONString(0);
+    }
+
+    //删除
+    @PostMapping(path = "/delete")
+    @ResponseBody
+    public String setDelete(int id) {
+        discussPostService.updateStatus(id,2);
+
+        //触发删帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(id);
+
+        eventProducer.fireEvent(event);
+
+        return JsonUtils.getJSONString(0);
+    }
 }

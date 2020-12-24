@@ -49,4 +49,14 @@ public class DiscussPostMapperTest extends ForumApplicationTests {
         int rows = discussPostMapper.updateCommentCount(283, 1);
         System.out.println(rows);
     }
+
+    @Test
+    public void updateType() {
+        discussPostMapper.updateType(293,1);
+    }
+
+    @Test
+    public void updateStatus() {
+        discussPostMapper.updateStatus(293,1);
+    }
 }
