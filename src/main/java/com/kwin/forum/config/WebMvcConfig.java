@@ -1,9 +1,6 @@
 package com.kwin.forum.config;
 
-import com.kwin.forum.controller.interceptor.AlphaInterceptor;
-import com.kwin.forum.controller.interceptor.LoginRequiredInterceptor;
-import com.kwin.forum.controller.interceptor.LoginTicketInterceptor;
-import com.kwin.forum.controller.interceptor.MessageInterceptor;
+import com.kwin.forum.controller.interceptor.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -22,6 +19,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Autowired
     private MessageInterceptor messageInterceptor;
+
+    @Autowired
+    private DataInterceptor dataInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -42,6 +42,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 //                .excludePathPatterns("/**/*.css","/**/*.png ","/**/*.jpg","/**/*.jpeg");
 
         registry.addInterceptor(messageInterceptor)
+                .excludePathPatterns("/**/*.css","/**/*.png ","/**/*.jpg","/**/*.jpeg");
+
+        registry.addInterceptor(dataInterceptor)
                 .excludePathPatterns("/**/*.css","/**/*.png ","/**/*.jpg","/**/*.jpeg");
     }
 }
