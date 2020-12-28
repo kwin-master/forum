@@ -16,7 +16,7 @@ public interface DiscussPostMapper {
      * @param limit 每页最大帖子数
      * @return
      */
-    List<DiscussPost> selectDiscussPosts(int userId,int offset,int limit);
+    List<DiscussPost> selectDiscussPosts(int userId,int offset,int limit,int orderMode);
 
     /**
      * userId = 0 时查询所有帖子数量,否则查询某用户的帖子数
@@ -49,4 +49,7 @@ public interface DiscussPostMapper {
 
     //更新帖子状态
     int updateStatus(int id,int status);
+
+    //更新帖子分数
+    int updateScore(int id,double score);
 }

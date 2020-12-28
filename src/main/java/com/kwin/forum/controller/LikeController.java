@@ -6,7 +6,9 @@ import com.kwin.forum.event.EventProducer;
 import com.kwin.forum.service.LikeService;
 import com.kwin.forum.util.HostHolder;
 import com.kwin.forum.util.JsonUtils;
+import com.kwin.forum.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.kwin.forum.contants.CommentContent.ENTITY_TYPE_POST;
 import static com.kwin.forum.contants.TopicContent.TOPIC_LIKE;
 
 @Controller
@@ -26,6 +29,9 @@ public class LikeController extends BaseController {
 
     @Autowired
     private EventProducer eventProducer;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @PostMapping(path = "/like")
     @ResponseBody
@@ -53,6 +59,12 @@ public class LikeController extends BaseController {
                     .setEntityUserId(entityUserId)
                     .setData("postId", postId);
             eventProducer.fireEvent(event);
+        }
+
+        if (entityType == ENTITY_TYPE_POST) {
+            //计算帖子分数
+            String redisKey = RedisKeyUtil.getPostScoreKey();
+            redisTemplate.opsForSet().add(redisKey,postId);
         }
 
         return JsonUtils.getJSONString(0,null,map);

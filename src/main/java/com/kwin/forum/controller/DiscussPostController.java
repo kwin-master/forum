@@ -8,7 +8,9 @@ import com.kwin.forum.service.LikeService;
 import com.kwin.forum.service.UserService;
 import com.kwin.forum.util.HostHolder;
 import com.kwin.forum.util.JsonUtils;
+import com.kwin.forum.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +43,9 @@ public class DiscussPostController extends BaseController {
     @Autowired
     private EventProducer eventProducer;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @PostMapping(path = "/add")
     @ResponseBody
     public String addDiscussPost(String title,String content) {
@@ -69,7 +74,10 @@ public class DiscussPostController extends BaseController {
                 .setEntityId(post.getId());
         eventProducer.fireEvent(event);
 
-        logger.info("帖子发布成功");
+        //计算帖子分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey,post.getId());
+
         //报错的情况，将来统一处理
         return JsonUtils.getJSONString(0,"发布成功!");
     }
@@ -190,6 +198,10 @@ public class DiscussPostController extends BaseController {
                 .setEntityId(id);
 
         eventProducer.fireEvent(event);
+
+        //计算帖子分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey,id);
 
         return JsonUtils.getJSONString(0);
     }

@@ -27,13 +27,8 @@ public class DiscussPostService extends BaseService {
      * @param limit 每页最大帖子数
      * @return
      */
-    public List<DiscussPost> findDiscussPosts(int userId,int offset,int limit) {
-        if (userId == 0) {
-            logger.info("查询出所有帖子,从第" + offset + "条开始，每页" + limit + "条记录");
-        }else {
-            logger.info("查询出userId=" + userId + "的所有帖子,从第" + offset + "条开始，每页" + limit + "条记录");
-        }
-        return discussPostMapper.selectDiscussPosts(userId,offset,limit);
+    public List<DiscussPost> findDiscussPosts(int userId,int offset,int limit,int orderMode) {
+        return discussPostMapper.selectDiscussPosts(userId,offset,limit,orderMode);
     }
 
     /**
@@ -94,5 +89,9 @@ public class DiscussPostService extends BaseService {
 
     public int updateStatus(int id,int status) {
         return discussPostMapper.updateStatus(id,status);
+    }
+
+    public int updateScore(int id,double score) {
+        return discussPostMapper.updateScore(id,score);
     }
 }

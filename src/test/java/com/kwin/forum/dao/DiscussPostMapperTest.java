@@ -16,7 +16,7 @@ public class DiscussPostMapperTest extends ForumApplicationTests {
 
     @Test
     public void selectDiscussPosts() {
-        List<DiscussPost> discussPosts = discussPostMapper.selectDiscussPosts(149, 0, 10);
+        List<DiscussPost> discussPosts = discussPostMapper.selectDiscussPosts(149, 0, 10,0);
         for (DiscussPost discussPost : discussPosts) {
             System.out.println(discussPost);
         }
@@ -58,5 +58,10 @@ public class DiscussPostMapperTest extends ForumApplicationTests {
     @Test
     public void updateStatus() {
         discussPostMapper.updateStatus(293,1);
+    }
+
+    @Test
+    public void updateScore() {
+        discussPostMapper.updateScore(293,1);
     }
 }
