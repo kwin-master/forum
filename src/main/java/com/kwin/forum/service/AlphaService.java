@@ -6,6 +6,8 @@ import com.kwin.forum.entity.DiscussPost;
 import com.kwin.forum.entity.User;
 import com.kwin.forum.util.UUIDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -18,7 +20,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.Date;
 
 @Service
-public class AlphaService {
+public class AlphaService extends BaseService {
     @Autowired
     private UserMapper userMapper;
 
@@ -83,5 +85,16 @@ public class AlphaService {
                 return "ok";
             }
         });
+    }
+
+    //让该方法在多线程环境下，被异步调用
+    @Async
+    public void execute1() {
+        logger.info("execute1执行了");
+    }
+
+    @Scheduled(initialDelay = 10000,fixedRate = 1000)
+    public void execute2() {
+        logger.info("execute2执行了");
     }
 }

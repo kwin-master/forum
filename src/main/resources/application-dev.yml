@@ -23,7 +23,7 @@ spring:
     properties.mail.smtp.ssl.enable: true
   redis:
     database: 1
-    host: 120.77.99.84
+    host: 106.53.96.171
     port: 6379
   kafka:
     bootstrap-servers: localhost:9092
@@ -35,6 +35,15 @@ spring:
     elasticsearch:
       cluster-name: kwin-forum
       cluster-nodes: 127.0.0.1:9300
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 15
+        queue-capacity: 100
+    scheduling:
+      pool:
+        size: 5
 
 logging:
   config: classpath:log4j2-dev.xml
