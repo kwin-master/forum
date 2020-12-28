@@ -93,7 +93,7 @@ public class AlphaService extends BaseService {
         logger.info("execute1执行了");
     }
 
-    @Scheduled(initialDelay = 10000,fixedRate = 1000)
+//    @Scheduled(initialDelay = 10000,fixedRate = 1000)
     public void execute2() {
         logger.info("execute2执行了");
     }
