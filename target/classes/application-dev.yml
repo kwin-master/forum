@@ -67,3 +67,13 @@ forum:
   path:
     domain: http://localhost:8080
     upload: C:/developer_tools/workspace/workspace_forum/upload
+
+qiniu:
+  key:
+    access: a9wT_6CuCET1TEsfmtiZsKWfh9EwOFJGYfp7UD09
+    secret: gdxVKpMixZDjy8mGMnFsitd3QyePbyE_zbW7jKe-
+  bucket:
+    header:
+      name: header2020
+      url: http://qm2utoxy4.hn-bkt.clouddn.com
+

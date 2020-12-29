@@ -6,16 +6,16 @@ import com.kwin.forum.service.FollowService;
 import com.kwin.forum.service.LikeService;
 import com.kwin.forum.service.UserService;
 import com.kwin.forum.util.HostHolder;
+import com.kwin.forum.util.JsonUtils;
 import com.kwin.forum.util.UUIDUtils;
+import com.qiniu.util.Auth;
+import com.qiniu.util.StringMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -50,13 +50,52 @@ public class UserController extends BaseController {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
+    @Value("${qiniu.key.access}")
+    private String accessKey;
+
+    @Value("${qiniu.key.secret}")
+    private String secretKey;
+
+    @Value("${qiniu.bucket.header.name}")
+    private String headerBucketName;
+
+    @Value("${qiniu.bucket.header.url}")
+    private String headerBucketUrl;
+
     @LoginRequired
     @GetMapping(path = "/setting")
-    public String  getSettingPage() {
-        logger.info("转跳到账号设置页面");
+    public String  getSettingPage(Model model) {
+        //上传文件名称
+        String fileName = UUIDUtils.generateUUID();
+        //设置响应信息
+        StringMap policy = new StringMap();
+        policy.put("returnBody", JsonUtils.getJSONString(0));
+        //生成上传凭证
+        Auth auth = Auth.create(accessKey,secretKey);
+        String uploadToken = auth.uploadToken(headerBucketName,fileName,3600,policy);
+
+        model.addAttribute("uploadToken",uploadToken);
+        model.addAttribute("fileName",fileName);
+
         return "/site/setting";
     }
 
+    //更新头像路径
+    @PostMapping(path = "/header/url")
+    @ResponseBody
+    public String updateHeaderUrl(String fileName) {
+        if (StringUtils.isBlank(fileName)) {
+            return JsonUtils.getJSONString(1,"文件名不能为空!");
+        }
+
+        String url = headerBucketUrl + "/" + fileName;
+
+        userService.updateHeader(hostHolder.getUser().getId(),url);
+
+        return JsonUtils.getJSONString(0);
+    }
+
+    //废弃
     /**
      * 上传头像，并更新登录用户的头像
      * @param headerImage
@@ -102,6 +141,7 @@ public class UserController extends BaseController {
         return "redirect:/index";
     }
 
+    //废弃
     /**
      * 获取头像
      * @param fileName
